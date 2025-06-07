@@ -4,47 +4,30 @@ rc_raw = [
     r"Application numbers:\s*(.+)(?=\s*Applicant)",
     r"Application number(s):\s*(.+)(?=\s*Applicant)"
 ]
+rc= "".join(dict.fromkeys(rc_raw))
 
 # Company name patterns
 company_raw = [
     r"Applicant:\s*(.+?)(?=\s*Site address)",
     r"Applicant's name:\s*(.+?)(?=\s*Site address)"
 ]
+company= "".join(dict.fromkeys(company_raw))
 
 # Address patterns
 address_raw = r"Site address:\s*(.+?)(?=\s*Legal description)"
-address_all = re.findall(address_raw, data)
-address = "".join(set(address_all))
+address = "".join(dict.fromkeys(address_raw))
 
 # Issue date patterns
 issue_date_raw = [
     r"Date:\s*(\d{1,2} [A-Za-z]+ \d{4})",
     r"Date:\s*(\d{1,2}/\d{1,2}/\d{2,4})",
     r"(\b\d{1,2} [A-Za-z]+ \d{4}\b)",
-    r"Date:\s*(\b\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}\b)",
-    r"(\b\d{2}/\d{2}/\d{2}\b)"
-    ]
-issue_date_str= "".join(dict.fromkeys(issue_date_raw))
-issue_date= datetime.strptime(issue_date_str, "%d %B %Y")
-issue_year=issue_date.year
-
-#Consent Expiry
-expiry_raw= [
-    r"expire on (\d{1,2} [A-Za-z]+ \d{4})",
-    r"expires on (\d{1,2} [A-Za-z]+ \d{4})",
-    r"expires (\d{1,2} [A-Za-z]+ \d{4})",
-    r"expire (\d{1,2} [A-Za-z]+\d{4})",
-    r"(\d{1,} years) from the date of commencement",
-    r"DIS\d{5,}(?:-w+)?\b will expire (\d{1,} years [A-Za-z]+[.?!])",
-    r"expires (\d{1,} months [A-Za-z])+[.?!]",
-    r"expires on (\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}\b)",
-    r"expire on (\d{1,2}/\d{1,2}/\d{4})",
-    r"expire ([A-Za-z](\d{1,}) years)",
-    r"expires [(\d{1,} years [A-Za-z]+[.?1])",
+    r"Date:\s*(\b\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}\b)"
 ]
-expiry = "".join(dict.fromkeys(expiry_raw))
-expiry_date= datetime.strptime(expiry, "%d %B %Y")
-expiry_year= expiry_date.year
+issue_date_raw1 = r"(\b\d{2}/\d{2}/\d{2}\b)"
+
+issue_date_str= "".join(dict.fromkeys(issue_date_raw))
+issue_date_str1 = "".join(dict.fromkeys(issue_date_raw1))
 
 # AUP triggers
 trigger_raw= [
@@ -60,7 +43,7 @@ proposal_raw =r"Proposal\s*:\s*(.+?)(?=\n[A-Z]|\.)"
 proposal = "".join(dict.fromkeys(proposal_raw))
 
 # Conditions
-if conditions_raw = [
+conditions_raw = [
     r"(?<=Conditions).*?(?=Advice notes)",
     r"(?<=Specific conditions - Air Discharge DIS\d{5,}(?:-\w+)?\b).*?(?=Specific conditions -)",
     r"(?<=Air Quality conditions).*?(?=Wastewater Discharge conditions)",
@@ -107,21 +90,27 @@ if conditions_raw = [
     r"(?<=Specific conditions - Discharge Permit DIS\d{5,}(?:-\w+)?\b).*?(?=Advice Notes - General)",
     r"(?<=AIR QUALITY - ROCK CRUSHER).*?(?=GROUNDWATER)"
     ]
-else:
-    r"(?<=Conditions).*?(?=Advice notes)"
+
+conditions_raw1= r"(?<=Conditions).*?(?=Advice notes)"
 
 conditions =" ".join(dict.fromkeys(conditions_raw))
+conditions1 =" ".join(dict.fromkeys(conditions_raw1))
 
-
-other_conditions = " ".join(dict.fromkeys( r"(?<=Conditions).*?(?=Advice notes)"))
-
-if conditions:
-    conditions
-else:
-    other_conditions
-
-conditions_numbers = re.findall(r"^\d+(?=\.)", conditions, re.MULTILINE)
-
+#Consent Expiry
+expiry_raw= [
+    r"expire on (\d{1,2} [A-Za-z]+ \d{4})",
+    r"expires on (\d{1,2} [A-Za-z]+ \d{4})",
+    r"expires (\d{1,2} [A-Za-z]+ \d{4})",
+    r"expire (\d{1,2} [A-Za-z]+\d{4})",
+    r"(\d{1,} years) from the date of commencement",
+    r"DIS\d{5,}(?:-w+)?\b will expire (\d{1,} years [A-Za-z]+[.?!])",
+    r"expires (\d{1,} months [A-Za-z])+[.?!]",
+    r"expires on (\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}\b)",
+    r"expire on (\d{1,2}/\d{1,2}/\d{4})",
+    r"expire ([A-Za-z](\d{1,}) years)",
+    r"expires [(\d{1,} years [A-Za-z]+[.?1])",
+]
+expiry = "".join(dict.fromkeys(expiry_raw))
 
 # Management Plans
 managementplan_raw = r"(?i)\b(\w+)\sManagement Plan"
