@@ -1,0 +1,11 @@
+def extract_text(file):
+    text = []
+    with fitz.open(stream=file.read(), filetype="pdf") as doc:
+        text = "\n".join([page.get_text('text') for page in doc])
+    if not text.strip():
+        with pdfplumber.open(file) as doc:
+            text = "\n".join([page.extract_text() for page in doc.pages if page.extract_text()])
+    if not text.strip():
+        images=convert_from_bytes(file.read())
+        text = "\n".join([pytesseract.image_to_string(img) for img in images])
+    return text
