@@ -298,7 +298,7 @@ proposal_patterns = [
         r"Summary of Decision\s*(.+?)(?=\n[A-Z]|\.)",
         r"Summary of proposal and activity status\s*(.+?)(?=\n[A-Z]|\.)"
     ]
-    proposal = []
+proposal = []
     for pattern in proposal_patterns:
         proposal.extend(re.findall(pattern, text, re.MULTILINE | re.IGNORECASE | re.DOTALL))
     pattern_str= " ".join(list(dict.fromkeys(proposal)))
