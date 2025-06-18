@@ -383,6 +383,7 @@ for pattern in conditions_patterns:
         consent_conditions.extend(re.findall(pattern, text))
     consent_conditions_str = " ".join(list(dict.fromkeys(triggers)))
 
+def get_data():
     return {
         "Resource Consent Numbers": rc_str if rc_str else "Unknown Resource Consent Numbers",
         "Company Name": company_str if company_str else "Unknown Company Name",
@@ -395,7 +396,7 @@ for pattern in conditions_patterns:
         "Consent Conditions": consent_conditions_str if consent_conditions_str else "Unknown Consent Conditions",
         "Consent Status": check_expiry(expiry_date), # This will now use the localized date
         "Text Blob": text
-}
+    }
 
 def clean_surrogates(text):
     return text.encode('utf-16', 'surrogatepass').decode('utf-16', 'ignore')
