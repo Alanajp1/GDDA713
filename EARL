@@ -162,12 +162,14 @@ def extract_metadata(text):
     rc_patterns = [
         r"Application number:\s*(.+?)(?=\s*Applicant)",
         r"Application numbers:\s*(.+)(?=\s*Applicant)",
-        r"Application number(?:s)?:\s*(.+)(?=\s*Applicant)",
+        r"Application number(s):\s*(.+)(?=\s*Applicant)",
+        r"Application number:\s*(.+)(?=\s*Original consent)",
+        r"Application numbers:\s*(.+)(?=\s*Original consent)"
         r"RC[0-9]{5,}" 
     ]
     rc_matches = []
     for pattern in rc_patterns:
-        rc_matches.extend(re.findall(pattern, text, re.IGNORECASE))
+        rc_matches.extend(re.findall(pattern, text, re.MULTILINE | re.IGNORECASE))
     
     # Flatten list of lists/tuples that re.findall might return
     flattened_rc_matches = []
@@ -185,22 +187,24 @@ def extract_metadata(text):
     ]
     company_matches = []
     for pattern in company_patterns:
-        company_matches.extend(re.findall(pattern, text, re.IGNORECASE))
+        company_matches.extend(re.findall(pattern, text, re.MULTILINE | re.IGNORECASE))
     company_str = ", ".join(list(dict.fromkeys(company_matches)))
 
     # Address patterns
     address_pattern = r"Site address:\s*(.+?)(?=\s*Legal description)"
-    address_match = re.findall(address_pattern, text, re.IGNORECASE)
+    address_match = re.findall(address_pattern, text, re.MULTILINE | re.IGNORECASE)
     address_str = ", ".join(list(dict.fromkeys(address_match)))
 
     # Issue date patterns
     issue_date_patterns = [
+        r"Commissioner\s*(\d{1,2} [A-Za-z]+ \d{4})",
         r"Date:\s*(\d{1,2} [A-Za-z]+ \d{4})",
         r"Date:\s*(\d{1,2}/\d{1,2}/\d{2,4})",
         r"(\b\d{1,2} [A-Za-z]+ \d{4}\b)",
         r"Date:\s*(\b\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}\b)",
         r"(\b\d{2}/\d{2}/\d{2}\b)"
     ]
+
     issue_date = None
     for pattern in issue_date_patterns:
         matches = re.findall(pattern, text)
@@ -227,20 +231,31 @@ def extract_metadata(text):
 
     # Consent Expiry patterns
     expiry_patterns = [
-        r"expire on (\d{1,2} [A-Za-z]+ \d{4})",
-        r"expires on (\d{1,2} [A-Za-z]+ \d{4})",
-        r"expires (\d{1,2} [A-Za-z]+ \d{4})",
-        r"expire (\d{1,2} [A-Za-z]+ \d{4})",
-        r"(\d{1,} years) from the date of commencement",
-        r"DIS\d{5,}(?:-\w+)?\b will expire (\d{1,} years [A-Za-z]+[.?!])",
-        r"expires (\d{1,} months [A-Za-z]+)[.?!]",
-        r"expires (\d{1,} years [A-Za-z]+)[.?!]",
-        r"expire on (\d{1,2}/\d{1,2}/\d{4})",
-        r"expire ([A-Za-z]\d{1,} years)",
+        r"expire\s+on\s+(\d{1,2}\s+[A-Za-z]+\s+\d{4})",
+        r"expires\s+on\s+(\d{1,2}\s+[A-Za-z]+\s+\d{4})",
+        r"expires\s+(\d{1,2}\s+[A-Za-z]+\s+\d{4})",
+        r"expire\s+(\d{1,2}\s+[A-Za-z]+\s+\d{4})",
+        r"expire\s+on\s+(\d{1,2}-\d{1,2}-\d{4})",
+        r"expires\s+([A-Za-z]+\s+years)",
+        r"expire\s+([A-Za-z]+\s+years)",
+        r"DIS\d{5,}(?:-w+)?\b\s+will\s+expire\s+(\d{1,}\s+years)",
+        r"expires\s+(\d{1,}\s+months\s+[A-Za-z])+\s+[.?!]",
+        r"expires\s+on\s+(\d{1,2}(?:st|nd|rd|th)\s+of\s+?\s+[A-Za-z]+\s+\d{4}\b)",
+        r"expires\s+on\s+the\s+(\d{1,2}(?:st|nd|rd|th)\s+of\s+?\s+[A-Za-z]+\s+\d{4}\b)",
+        r"expire\s+on\s+(\d{1,2}/\d{1,2}/\d{4})",
+        r"expire\s+on\s+(\d{1,2}-\d{1,2}-\d{4})",
+        r"expire\s+([A-Za-z]+\s+(\d{1,})\s+years)",
+        r"expire\s+(\d{1,2}\s+years)",
+        r"expires\s+(\d{1,2}\s+years)",
+        r"expire\s+([A-Za-z]+\s+(\d{1,2})\s+[A-Za-z]+)",
+        r"earlier\s+(\d{1,2}\s+[A-Za-z]+\s+\d{4})",
+        r"on\s+(\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}\b)",
+        r"on\s+the\s+(\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}\b)",
+        r"(\d{1,}\s+years)",
     ]
     expiry_date = None
     for pattern in expiry_patterns:
-        matches = re.findall(pattern, text)
+        matches = re.findall(pattern, conditions_str)
         if matches:
             for dt_val_candidate in matches:
                 dt_str = dt_val_candidate[0] if isinstance(dt_val_candidate, tuple) and dt_val_candidate else dt_val_candidate
@@ -264,7 +279,8 @@ def extract_metadata(text):
         r"(E14\.\d+\.\d+)",
         r"(E14\.\d+\.)",
         r"(NES:STO)",
-        r"(NES:AQ)"
+        r"(NES:AQ)",
+        r"(NES:IGHG)
     ]
     triggers = []
     for pattern in trigger_patterns:
@@ -272,9 +288,20 @@ def extract_metadata(text):
     triggers_str = " ".join(list(dict.fromkeys(triggers)))
 
     # Reason (Proposal)
-    proposal_pattern = r"Proposal\s*:\s*(.+?)(?=\n[A-Z]|\.)"
-    proposal_matches = re.findall(proposal_pattern, text, re.DOTALL)
-    proposal_str = " ".join(list(dict.fromkeys(proposal_matches)))
+proposal_patterns = [
+        r"Proposal\s*:\s*(.+?)(?=\n[A-Z]|\.)",
+        r"Proposal\s*:\s*(.+?)(?=\n[A-Z]|\.)",
+        r"Proposal\s*(.+?)(?=\n[A-Z]|\.)",
+        r"Proposal\s*(.+?)(?=\n[A-Z]|\:)",
+        r"Introduction and summary of proposal\s*(.+?)(?=\s*Submission)",
+        r"Proposal, site and locality description\s*(.+?)(?=\n[A-Z]|\.)",
+        r"Summary of Decision\s*(.+?)(?=\n[A-Z]|\.)",
+        r"Summary of proposal and activity status\s*(.+?)(?=\n[A-Z]|\.)"
+    ]
+    proposal = []
+    for pattern in proposal_patterns:
+        proposal.extend(re.findall(pattern, text, re.MULTILINE | re.IGNORECASE | re.DOTALL))
+    pattern_str= " ".join(list(dict.fromkeys(proposal)))
 
     # Conditions (consolidated pattern for broader capture)
     conditions_patterns = [
@@ -324,7 +351,7 @@ def extract_metadata(text):
         r"(?:Specific conditions - Discharge Permit DIS\d{5,}(?:-\w+)?\b).*?(?=Advice Notes - General)",
         r"(?:AIR QUALITY - ROCK CRUSHER).*?(?=GROUNDWATER)",
         # Fallback broad pattern if specific ones fail
-        r"(?:Conditions\n).*?(?=(?:Advice notes|Schedule \d+|APPENDIX \w+|E\. Definitions|\Z))",
+        r"(?<=Conditions).*?(?=Advice notes)"
     ]
 
     conditions_str = ""
@@ -334,7 +361,7 @@ def extract_metadata(text):
             conditions_str = conditions_match.group(0).strip()
             break
 
-    # Extracting numbered conditions (if conditions_str is found)
+    # Extracting numbered conditions 
     conditions_numbers = []
     if conditions_str:
         temp_conditions_matches = re.findall(r"^\s*(\d+\.?\d*)\s*[A-Z].*?(?=\n\s*\d+\.?\d*\s*[A-Z]|\Z)", conditions_str, re.MULTILINE | re.DOTALL)
@@ -349,10 +376,12 @@ def extract_metadata(text):
         conditions_numbers = [re.match(r'^(\d+\.?\d*)', cn.strip()).group(1) for cn in flattened_temp_conditions if isinstance(cn, str) and re.match(r'^(\d+\.?\d*)', cn.strip())]
         conditions_numbers = list(dict.fromkeys(conditions_numbers))
 
-    # Management Plans from conditions
-    managementplan_raw = r"(?i)\b(\w+)\sManagement Plan"
-    management_plan = re.findall(managementplan_raw, conditions_str, re.DOTALL)
-    managementplan_final = list(dict.fromkeys([f"{word} Management Plan" for word in management_plan]))
+    # Extracting consent conditions
+    consents_patterns = r"\d\.\s*(.+?)(?=\n\d\.|\Z)"
+    consent_conditions = []
+    for pattern in consents_patterns:
+        consent_conditions.extend(re.findall(pattern, text))
+    consent_conditions_str = " ".join(list(dict.fromkeys(triggers)))
 
     return {
         "Resource Consent Numbers": rc_str if rc_str else "Unknown Resource Consent Numbers",
@@ -360,10 +389,10 @@ def extract_metadata(text):
         "Address": address_str if address_str else "Unknown Address",
         "Issue Date": issue_date.strftime("%d-%m-%Y") if issue_date else "Unknown Issue Date",
         "Expiry Date": expiry_date.strftime("%d-%m-%Y") if expiry_date else expiry_patterns,
-        "AUP(OP) Triggers": triggers_str if triggers_str else "None AUP Triggers",
-        "Reason for Consent": proposal_str if proposal_str else "Unknown Reason fro Consent",
-        "Consent Conditions": ", ".join(conditions_numbers) if conditions_numbers else "None Consent Conditions",
-        "Mitigation (Consent Conditions)": ", ".join(managementplan_final) if managementplan_final else "None",
+        "AUP(OP) Triggers": triggers_str if triggers_str else "Unknown AUP Triggers",
+        "Reason for Consent": proposal_str if proposal_str else "Unknown Reason for Consent",
+        "Consent Condition Numbers": ", ".join(conditions_numbers) if conditions_numbers else "Unknown Consent Condition Numbers",
+        "Consent Conditions": consent_conditions_str if consent_conditions_str else "Unknown Consent Conditions",
         "Consent Status": check_expiry(expiry_date), # This will now use the localized date
         "Text Blob": text
     }
