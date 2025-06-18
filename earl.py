@@ -157,6 +157,25 @@ def geocode_address(address):
         st.warning(f"Geocoding failed for '{standardized_address}': {e}")
         return (None, None)
 
+uploaded_files= st.sidebar.file_uploader("Upload your files here", type= "pdf", accept_multiple_files=True)
+def extract_text(file):
+    text = []
+    with fitz.open(stream=file.read(), filetype="pdf") as doc:
+        text = "\n".join([page.get_text('text') for page in doc]) # for regular PDF
+    if not text.strip():
+        with pdfplumber.open(file) as doc:
+            text = "\n".join([page.extract_text() for page in doc.pages if page.extract_text()]) # for text within table format
+    if not text.strip():
+        images=convert_from_bytes(file.read(), poppler_path=r"C:\\poppler\\Library\\bin")
+        text = "\n".join([pytesseract.image_to_string(img) for img in images])  # for scanned PDF files
+    return text
+       
+if not uploaded_files:
+    st.warning("Please upload a PDF file to continue")        
+else:
+    for file in uploaded_files:
+        extracted_text = extract_text(file)
+
 def extract_metadata(text):
     # RC number patterns
     rc_patterns = [
