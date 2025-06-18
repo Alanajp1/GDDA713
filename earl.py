@@ -174,7 +174,7 @@ if not uploaded_files:
     st.warning("Please upload a PDF file to continue")        
 else:
     for file in uploaded_files:
-        extracted_text = extract_text(file)
+        text = extract_text(file)
 
 def extract_metadata(text):
     # RC number patterns
