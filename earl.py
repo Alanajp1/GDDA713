@@ -299,9 +299,9 @@ proposal_patterns = [
         r"Summary of proposal and activity status\s*(.+?)(?=\n[A-Z]|\.)"
     ]
 proposal = []
-    for pattern in proposal_patterns:
-        proposal.extend(re.findall(pattern, text, re.MULTILINE | re.IGNORECASE | re.DOTALL))
-    pattern_str= " ".join(list(dict.fromkeys(proposal)))
+for pattern in proposal_patterns:
+    proposal.extend(re.findall(pattern, text, re.MULTILINE | re.IGNORECASE | re.DOTALL))
+pattern_str= " ".join(list(dict.fromkeys(proposal)))
 
     # Conditions (consolidated pattern for broader capture)
     conditions_patterns = [
