@@ -280,7 +280,7 @@ def extract_metadata(text):
         r"(E14\.\d+\.)",
         r"(NES:STO)",
         r"(NES:AQ)",
-        r"(NES:IGHG)
+        r"(NES:IGHG)"
     ]
     triggers = []
     for pattern in trigger_patterns:
