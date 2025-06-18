@@ -395,7 +395,7 @@ for pattern in conditions_patterns:
         "Consent Conditions": consent_conditions_str if consent_conditions_str else "Unknown Consent Conditions",
         "Consent Status": check_expiry(expiry_date), # This will now use the localized date
         "Text Blob": text
-    }
+}
 
 def clean_surrogates(text):
     return text.encode('utf-16', 'surrogatepass').decode('utf-16', 'ignore')
