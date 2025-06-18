@@ -303,8 +303,8 @@ for pattern in proposal_patterns:
     proposal.extend(re.findall(pattern, text, re.MULTILINE | re.IGNORECASE | re.DOTALL))
 pattern_str= " ".join(list(dict.fromkeys(proposal)))
 
-    # Conditions (consolidated pattern for broader capture)
-    conditions_patterns = [
+# Conditions (consolidated pattern for broader capture)
+conditions_patterns = [
         r"(?:Conditions).*?(?=Advice notes)",
         r"(?:Specific conditions - Air Discharge DIS\d{5,}(?:-\w+)?\b).*?(?=Specific conditions -)",
         r"(?:Air Quality conditions).*?(?=Wastewater Discharge conditions)",
@@ -352,14 +352,14 @@ pattern_str= " ".join(list(dict.fromkeys(proposal)))
         r"(?:AIR QUALITY - ROCK CRUSHER).*?(?=GROUNDWATER)",
         # Fallback broad pattern if specific ones fail
         r"(?<=Conditions).*?(?=Advice notes)"
-    ]
+]
 
-    conditions_str = ""
-    for pattern in conditions_patterns:
-        conditions_match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
-        if conditions_match:
-            conditions_str = conditions_match.group(0).strip()
-            break
+conditions_str = ""
+for pattern in conditions_patterns:
+    conditions_match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
+    if conditions_match:
+        conditions_str = conditions_match.group(0).strip()
+        break
 
     # Extracting numbered conditions 
     conditions_numbers = []
