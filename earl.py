@@ -171,7 +171,7 @@ def extract_metadata(text):
     ]
     rc_matches = []
     for pattern in rc_patterns:
-        rc_matches.extend(re.findall(pattern, text, re.MULTILINE |re.IGNORECASE | re.DOTALL))
+        rc_matches.extend(re.findall(pattern, text, re.MULTILINE))
 
     # Flatten list of lists/tuples that re.findall might return
     flattened_rc_matches = []
@@ -189,12 +189,12 @@ def extract_metadata(text):
     ]
     company_matches = []
     for pattern in company_patterns:
-        company_matches.extend(re.findall(pattern, text, re.MULTILINE | re.IGNORECASE))
+        company_matches.extend(re.findall(pattern, text, re.MULTILINE))
     company_str = ", ".join(list(dict.fromkeys(company_matches)))
 
     # Address patterns
     address_pattern = r"Site address:\s*(.+?)(?=\s*Legal description)"
-    address_match = re.findall(address_pattern, text, re.MULTILINE | re.IGNORECASE)
+    address_match = re.findall(address_pattern, text, re.MULTILINE)
     address_str = ", ".join(list(dict.fromkeys(address_match)))
 
     # Issue date patterns
