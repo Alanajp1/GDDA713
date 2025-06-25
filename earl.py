@@ -258,7 +258,7 @@ def extract_metadata(text):
     ]
     expiry_date = None
     for pattern in expiry_patterns:
-        matches = re.findall(pattern, conditions_str, re.DOTALL | re.IGNORECASE)
+        matches = re.findall(pattern, text, re.DOTALL | re.IGNORECASE)
         if matches:
             for dt_val_candidate in matches:
                 dt_str = dt_val_candidate[0] if isinstance(dt_val_candidate, tuple) and dt_val_candidate else dt_val_candidate
