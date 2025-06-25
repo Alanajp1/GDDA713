@@ -291,7 +291,7 @@ def extract_metadata(text):
             if isinstance(match, tuple):
                 expiry_date1.append(" ".join(match).strip())
             else:
-                expiry_date1append(match.strip())
+                expiry_date1.append(match.strip())
 
     expiry_str= ", ".join(dict.fromkeys(expiry_date1))
         
