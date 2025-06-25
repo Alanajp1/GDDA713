@@ -281,10 +281,6 @@ def extract_metadata(text):
                         dt_str_cleaned = re.sub(r'\b(\d{1,2})(?:st|nd|rd|th)?(?: of)?\b', r'\1', dt_str)
                         expiry_date = datetime.strptime(dt_str_cleaned, "%d %B %Y")
 
-                    else:
-
-                        expiry_date = " ".join(list(dict.fromkeys(matches))) 
-
                     break
 
                 except ValueError:
@@ -402,7 +398,7 @@ def extract_metadata(text):
         "Company Name": company_str if company_str else "Unknown Company Name",
         "Address": address_str if address_str else "Unknown Address",
         "Issue Date": issue_date.strftime("%d-%m-%Y") if issue_date else "Unknown Issue Date",
-        "Expiry Date": expiry_date.strftime("%d-%m-%Y") if expiry_str else "Unknown Expiry Date",
+        "Expiry Date": expiry_date.strftime("%d-%m-%Y") if expiry_date else expiry_str,
         "AUP(OP) Triggers": triggers_str if triggers_str else "Unknown AUP Triggers",
         "Reason for Consent": proposal_str if proposal_str else "Unknown Reason for Consent",
         "Consent Condition Numbers": ", ".join(conditions_numbers) if conditions_numbers else "Unknown Condition Numbers",
