@@ -78,6 +78,9 @@ st.markdown(f"""
 st.markdown("""
     <h1 style='color:#2c6e91; text-align:center; font-size:2.7em; font-family: Quicksand, sans-serif;'>
         Auckland Air Discharge Consent Dashboard
+        
+        Welcome to the Auckland Air Discharge Consent Dashboard. This dashboard allows you to upload the Air Discharge Resource Consent Decison Report to transforms your files into meaningful data.Add commentMore actions
+        Explore the data by the csv file options or interact with the data using the Groq AI or LLM Semantic Query.
     </h1>
 """, unsafe_allow_html=True)
 
@@ -159,12 +162,12 @@ def geocode_address(address):
 def extract_metadata(text):
     # RC number patterns
     rc_patterns = [
-        r"Application number:\s*(.+?)\s*Applicant",
-        r"Application numbers:\s*(.+)\s*Applicant",
-        r"Application number(s):\s*(.+)\s*Applicant",
-        r"Application number:\s*(.+)\s*Original consent",
-        r"Application numbers:\s*(.+)\s*Original consent"
-        r"RC[0-9]{5,}"
+        r"Application number:\s*(.+?)(?=\s*Applicant)",
+        r"Application numbers:\s*(.+)(?=\s*Applicant)",
+        r"Application number(s):\s*(.+)(?=\s*Applicant)",
+        r"Application number:\s*(.+)(?=\s*Original consent)",
+        r"Application numbers:\s*(.+)(?=\s*Original consent)"
+        r"RC[0-9]{5,}" 
     ]
     rc_matches = []
     for pattern in rc_patterns:
@@ -186,7 +189,7 @@ def extract_metadata(text):
     ]
     company_matches = []
     for pattern in company_patterns:
-        company_matches.extend(re.findall(pattern, text, re.IGNORECASE))
+        company_matches.extend(re.findall(pattern, text, re.MULTILINE | re.IGNORECASE))
     company_str = ", ".join(list(dict.fromkeys(company_matches)))
 
     # Address patterns
@@ -207,7 +210,7 @@ def extract_metadata(text):
 
     issue_date = None
     for pattern in issue_date_patterns:
-        matches = re.findall(pattern, text)
+        matches = re.findall(pattern, text, re.DOTALL)
         if matches:
             for dt_str_candidate in matches:
                 dt_str = dt_str_candidate[0] if isinstance(dt_str_candidate, tuple) and dt_str_candidate else dt_str_candidate
@@ -255,7 +258,7 @@ def extract_metadata(text):
     ]
     expiry_date = None
     for pattern in expiry_patterns:
-        matches = re.findall(pattern, text)
+        matches = re.findall(pattern, conditions_str, re.DOTALL | re.IGNORECASE)
         if matches:
             for dt_val_candidate in matches:
                 dt_str = dt_val_candidate[0] if isinstance(dt_val_candidate, tuple) and dt_val_candidate else dt_val_candidate
@@ -286,7 +289,8 @@ def extract_metadata(text):
         r"(E14\.\d+\.\d+)",
         r"(E14\.\d+\.)",
         r"(NES:STO)",
-        r"(NES:AQ)"
+        r"(NES:AQ)",
+        r"(NES:IGHG)"
     ]
     triggers = []
     for pattern in trigger_patterns:
@@ -305,7 +309,7 @@ def extract_metadata(text):
     ]
     proposal =  []
     for pattern in proposal_patterns:
-        proposal.extend(re.findall(pattern, text))
+        proposal.extend(re.findall(pattern, text, re.MULTILINE | re.DOTALL))
     proposal_str= "".join(list(dict.fromkeys(proposal)))
 
     # Conditions (consolidated pattern for broader capture)
@@ -388,7 +392,7 @@ def extract_metadata(text):
         "Company Name": company_str if company_str else "Unknown Company Name",
         "Address": address_str if address_str else "Unknown Address",
         "Issue Date": issue_date.strftime("%d-%m-%Y") if issue_date else "Unknown Issue Date",
-        "Expiry Date": expiry_date.strftime("%d-%m-%Y") if expiry_date else "Unknown Expiry Date",
+        "Expiry Date": expiry_date.strftime("%d-%m-%Y") if expiry_date else expiry_patterns else "Unknown Expiry Date",
         "AUP(OP) Triggers": triggers_str if triggers_str else "Unknown AUP Triggers",
         "Reason for Consent": proposal_str if proposal_str else "Unknown Reason for Consent",
         "Consent Condition Numbers": ", ".join(conditions_numbers) if conditions_numbers else "Unknown Condition Numbers",
