@@ -373,7 +373,7 @@ def extract_metadata(text):
         r"(?<=Conditions).*?(?=Advice notes)"
     ]
 
-    conditions_str = ""
+    conditions_str = []
     for pattern in conditions_patterns:
         conditions_match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
         if conditions_match:
