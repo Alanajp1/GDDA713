@@ -455,7 +455,7 @@ model_name = st.sidebar.selectbox("Choose Embedding Model:", [
 ])
 
 uploaded_files = st.sidebar.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
-query_input = st.sidebar.text_input("Semantic Search Query")
+query_input = st.sidebar.text_input("LLM Semantic Search Query")
 
 @st.cache_resource
 def load_embedding_model(name):
@@ -580,7 +580,7 @@ if uploaded_files:
                 st.plotly_chart(fig, use_container_width=True)
 
         # Semantic Search
-        with st.expander("Semantic Search Results", expanded=True):
+        with st.expander("LLM Semantic Search Results", expanded=True):
             if query_input:
                 corpus = df["Text Blob"].tolist()
                 corpus_embeddings = get_corpus_embeddings(tuple(corpus), model_name)
@@ -589,7 +589,7 @@ if uploaded_files:
                 top_k_indices = scores.argsort(descending=True)
 
                 displayed_results = 0
-                similarity_threshold = st.slider("Semantic Search Relevance Threshold", min_value=0.0, max_value=1.0, value=0.5, step=0.05)
+                similarity_threshold = st.slider("LLM Semantic Search Relevance Threshold", min_value=0.0, max_value=1.0, value=0.5, step=0.05)
 
                 for idx in top_k_indices:
                     score = scores[idx.item()]
