@@ -262,7 +262,7 @@ def extract_metadata(text):
     expiry_str= "".join(list(dict.fromkeys(expiry_date)))
 
     expiry_date = ""
-        for pattern in expiry_patterns:
+    for pattern in expiry_patterns:
         matches = re.findall(pattern, text, re.DOTALL | re.IGNORECASE)
         if matches:
             for dt_val_candidate in matches:
