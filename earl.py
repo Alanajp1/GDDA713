@@ -375,7 +375,7 @@ def extract_metadata(text):
 
     conditions_str = []
     for pattern in conditions_patterns:
-        conditions_match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
+        conditions_match = re.search(pattern, text, re.MULTILINE | re.DOTALL | re.IGNORECASE)
         if conditions_match:
             conditions_str = conditions_match.group(0).strip()
             break
