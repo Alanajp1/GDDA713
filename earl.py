@@ -256,37 +256,11 @@ def extract_metadata(text):
         r"on\s+the\s+(\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}\b)",
         r"(\d{1,}\s+years)",
     ]
-    expiry_date = None
-    for pattern in expiry_patterns:
-        matches = re.findall(pattern, text, re.DOTALL | re.IGNORECASE)
-        if matches:
-            for dt_val_candidate in matches:
-                dt_str = dt_val_candidate[0] if isinstance(dt_val_candidate, tuple) and dt_val_candidate else dt_val_candidate
-                if not isinstance(dt_str, str) or not dt_str.strip():
-                    continue
+    expiry_date = []
+    for pattern in exiry_patterns:
+        expiry_date.extend(re.findall(pattern, text)
+    expiry_str= "".join(list(dict.fromkeys(expiry_date)))
 
-                try:
-                    if '/' in dt_str:
-                        if len(dt_str.split('/')[-1]) == 2:
-                            expiry_date = datetime.strptime(dt_str, "%d/%m/%y")
-                        else:
-                            expiry_date = datetime.strptime(dt_str, "%d/%m/%Y")
-                    else:
-
-                        dt_str_cleaned = re.sub(r'\b(\d{1,2})(?:st|nd|rd|th)?(?: of)?\b', r'\1', dt_str)
-                        expiry_date = datetime.strptime(dt_str_cleaned, "%d %B %Y")
-
-                    else:
-
-                        expiry_date = " ".join(list(dict.fromkeys(matches))) 
-
-                    break
-
-                except ValueError:
-                    # If parsing fails for this match, just continue to the next one
-                    continue
-            if expiry_date:
-                break
 
     # AUP triggers
     trigger_patterns = [
