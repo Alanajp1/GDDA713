@@ -257,7 +257,7 @@ def extract_metadata(text):
         r"(\d{1,}\s+years)",
     ]
     expiry_date1 = []
-    for pattern in exiry_patterns:
+    for pattern in exipry_patterns:
         expiry_date.extend(re.findall(pattern, text))
     expiry_str= "".join(list(dict.fromkeys(expiry_date)))
 
