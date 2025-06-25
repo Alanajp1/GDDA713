@@ -286,9 +286,15 @@ def extract_metadata(text):
     
     expiry_date1 = []
     for pattern in expiry_patterns:
-        expiry_date1.extend(re.findall(pattern, text))
-    expiry_str= "".join(list(dict.fromkeys(expiry_date1)))
-    
+        matches = re.findall(pattern, text)
+        for match in matches:
+            if isinstance(match, tuple):
+                expiry_date1.append(" ".join(match).strip())
+            else:
+                expiry_date1append(match.strip())
+
+    expiry_str= ", ".join(dict.fromkeys(expiry_date1))
+        
     # AUP triggers
     trigger_patterns = [
         r"(E14\.\d+\.\d+)",
