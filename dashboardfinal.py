@@ -395,9 +395,6 @@ def extract_metadata(text):
         conditions_numbers = [re.match(r'^(\d+\.?\d*)', cn.strip()).group(1) for cn in flattened_temp_conditions if isinstance(cn, str) and re.match(r'^(\d+\.?\d*)', cn.strip())]
         conditions_numbers = list(dict.fromkeys(conditions_numbers))
 
-    # Extracting consent conditions
-    consent_conditions = re.findall(r"\d\.\s*(.+?)\s*\d\.", conditions_str, re.MULTILINE | re.DOTALL)
-
     return {
         "Resource Consent Numbers": rc_str if rc_str else "Unknown Resource Consent Numbers",
         "Company Name": company_str if company_str else "Unknown Company Name",
@@ -407,7 +404,6 @@ def extract_metadata(text):
         "AUP(OP) Triggers": triggers_str if triggers_str else "Unknown AUP Triggers",
         "Reason for Consent": proposal_str if proposal_str else "Unknown Reason for Consent",
         "Consent Condition Numbers": ", ".join(conditions_numbers) if conditions_numbers else "Unknown Condition Numbers",
-        "Consent Conditions": " ".join(consent_conditions) if consent_conditions else "Unknown Consent Conditions",
         "Consent Status": check_expiry(expiry_date), # This will now use the localized date
         "Text Blob": text
     }
