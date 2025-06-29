@@ -163,10 +163,10 @@ def extract_metadata(text):
     # RC number patterns
     rc_patterns = [
         r"Application number:\s*(.+?)(?=\s*Applicant)",
-        r"Application numbers:\s*(.+)(?=\s*Applicant)",
-        r"Application number(s):\s*(.+)(?=\s*Applicant)",
-        r"Application number:\s*(.+)(?=\s*Original consent)",
-        r"Application numbers:\s*(.+)(?=\s*Original consent)"
+        r"Application numbers:\s*(.+?)(?=\s*Applicant)",
+        r"Application number(s):\s*(.+?)(?=\s*Applicant)",
+        r"Application number:\s*(.+?)(?=\s*Original consent)",
+        r"Application numbers:\s*(.+?)(?=\s*Original consent)",
         r"RC[0-9]{5,}" 
     ]
     rc_matches = []
