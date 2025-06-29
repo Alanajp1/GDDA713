@@ -256,6 +256,7 @@ def extract_metadata(text):
         r"(\d{1,}\s+years)",
     ]
     expiry_date = None
+    expiry_date1 = []
     for pattern in expiry_patterns:
         matches = re.findall(pattern, text)
         if matches:
@@ -283,7 +284,6 @@ def extract_metadata(text):
             if expiry_date:
                 break
     
-    expiry_date1 = []
     for pattern in expiry_patterns:
         matches = re.findall(pattern, text)
         for match in matches:
@@ -292,7 +292,7 @@ def extract_metadata(text):
             else:
                 expiry_date1.append(match.strip())
     expirt_date1 = list(dict.fromkeys(expiry_date1))
-    expiry_str= ", ".join(dict.fromkeys(expiry_date1))
+    expiry_str= ", ".join(expiry_date1)
         
     # AUP triggers
     trigger_patterns = [
