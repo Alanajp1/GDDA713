@@ -288,7 +288,7 @@ def extract_metadata(text):
         matches = re.findall(pattern, text)
         for match in matches:
             if isinstance(match, tuple):
-                expiry_date1.append(" ".join([m for m in match if m).strip())
+                expiry_date1.append(" ".join([m for m in match if m]).strip())
             else:
                 expiry_date1.append(match.strip())
     expirt_date1 = list(dict.fromkeys(expiry_date1))
