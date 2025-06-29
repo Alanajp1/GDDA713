@@ -394,7 +394,7 @@ def extract_metadata(text):
         conditions_numbers = [re.match(r'^(\d+\.?\d*)', cn.strip()).group(1) for cn in flattened_temp_conditions if isinstance(cn, str) and re.match(r'^(\d+\.?\d*)', cn.strip())]
         conditions_numbers = list(dict.fromkeys(conditions_numbers))
 
-        consent_conditions = re.findall(r"^\s*(\d+\.?\d*)\s+(.*?)(=\n\s*\d+\.\s+[A-Z|\Z)", conditions_str, re.MULTILINE | re.DOTALL)
+        consent_conditions = re.findall(r"^\s*(\d+\.?\d*)\s+(.*?)(=\n\s*\d+\.\s+[A-Z]|\Z)", conditions_str, re.MULTILINE | re.DOTALL)
         
 
     return {
