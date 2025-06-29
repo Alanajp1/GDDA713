@@ -162,18 +162,19 @@ def geocode_address(address):
 def extract_metadata(text):
     # RC number patterns
     rc_patterns = [
-        r"Application number:\s*(.+?)(?=\s*Applicant)",
-        r"Application numbers:\s*(.+?)(?=\s*Applicant)",
-        r"Application number(s):\s*(.+?)(?=\s*Applicant)",
+        r"Application number:\s*(.+?)(?=\s*Applicant:)",
+        r"Application numbers:\s*(.+?)(?=\s*Applicant:)",
+        r"Application number(s):\s*(.+?)(?=\s*Applicant:)",
         r"Application number:\s*(.+?)(?=\s*Original consent)",
         r"Application numbers:\s*(.+?)(?=\s*Original consent)",
-        r"Application number:\s*(.+?)(?=\s*Site)",
-        r"Application numbers:\s*(.+?)(?=\s*Site)",
+        r"Application number:\s*(.+?)(?=\s*Site address:)",
+        r"Application numbers:\s*(.+?)(?=\s*Site address:)",
+        r"Application number(s):\s*(.+?)(?=\s*Site address:)",
         r"RC[0-9]{5,}" 
     ]
     rc_matches = []
     for pattern in rc_patterns:
-        rc_matches.extend(re.findall(pattern, text, re.DOTALL | re.MULTILINE))
+        rc_matches.extend(re.findall(pattern, text, re.DOTALL | re.MULTILINE | re.IGNORECASE))
 
     # Flatten list of lists/tuples that re.findall might return
     flattened_rc_matches = []
