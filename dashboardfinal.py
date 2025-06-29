@@ -171,7 +171,7 @@ def extract_metadata(text):
     ]
     rc_matches = []
     for pattern in rc_patterns:
-        rc_matches.extend(re.findall(pattern, text, re.MULTILINE))
+        rc_matches.extend(re.findall(pattern, text, re.MULTILINE | re.DOTALL))
 
     # Flatten list of lists/tuples that re.findall might return
     flattened_rc_matches = []
@@ -189,12 +189,12 @@ def extract_metadata(text):
     ]
     company_matches = []
     for pattern in company_patterns:
-        company_matches.extend(re.findall(pattern, text, re.MULTILINE))
+        company_matches.extend(re.findall(pattern, text, re.MULTILINE | re.DOTALL))
     company_str = ", ".join(list(dict.fromkeys(company_matches)))
 
     # Address patterns
     address_pattern = r"Site address:\s*(.+?)(?=\s*Legal description)"
-    address_match = re.findall(address_pattern, text, re.MULTILINE)
+    address_match = re.findall(address_pattern, text, re.MULTILINE | re.DOTALL)
     address_str = ", ".join(list(dict.fromkeys(address_match)))
 
     # Issue date patterns
@@ -203,14 +203,13 @@ def extract_metadata(text):
         r"Date:\s*(\d{1,2} [A-Za-z]+ \d{4})",
         r"Date:\s*(\d{1,2}/\d{1,2}/\d{2,4})",
         r"(\b\d{1,2} [A-Za-z]+ \d{4}\b)",
-        r"Date:\s*(\b\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}\b)"
+        r"Date:\s*(\b\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]+\s+\d{4}\b)",
+        r"(\b\d{2}/\d{2}/\d{2}\b)"
     ]
-    issue_date_else_patterns = r"(\b\d{2}/\d{2}/\d{2}\b)"
-
-
+  
     issue_date = None
     for pattern in issue_date_patterns:
-        matches = re.findall(pattern, text, re.DOTALL)
+        matches = re.findall(pattern, text, re.DOTALL | re.MULTILINE)
         if matches:
             for dt_str_candidate in matches:
                 dt_str = dt_str_candidate[0] if isinstance(dt_str_candidate, tuple) and dt_str_candidate else dt_str_candidate
@@ -228,7 +227,7 @@ def extract_metadata(text):
                         issue_date = datetime.strptime(dt_str, "%d %B %Y")
                     break
                 except ValueError:
-                    continue
+                    continue           
             if issue_date:
                 break
 
