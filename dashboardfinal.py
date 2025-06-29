@@ -382,7 +382,7 @@ def extract_metadata(text):
     # Extracting numbered conditions (if conditions_str is found)
     conditions_numbers = []
     if conditions_str:
-        temp_conditions_matches = re.findall(r"^\s*(\d+\.?\d*)\s*[A-Z].*?(?=\n\s*\d+\.?\d*\s*[A-Z]|\Z)", conditions_str, re.MULTILINE | re.DOTALL)
+        temp_conditions_matches = re.findall(r"^\s*((?:\d+\.){1,3}\s*[A-Z].*?(?=\n\s*(?:*\d+\.){1,3}\s*[A-Z]|\Z)", conditions_str, re.MULTILINE | re.DOTALL)
 
         flattened_temp_conditions = []
         for item in temp_conditions_matches:
@@ -392,10 +392,7 @@ def extract_metadata(text):
                 flattened_temp_conditions.append(item)
 
         conditions_numbers = [re.match(r'^(\d+\.?\d*)', cn.strip()).group(1) for cn in flattened_temp_conditions if isinstance(cn, str) and re.match(r'^(\d+\.?\d*)', cn.strip())]
-        conditions_numbers = list(dict.fromkeys(conditions_numbers))
-
-        consent_conditions = re.findall(r"^\s*(\d+\.?\d*)\s+(.*?)(=\n\s*\d+\.\s+(?:[A-Z]|\Z))", conditions_str, re.MULTILINE | re.DOTALL)
-        
+        conditions_numbers = list(dict.fromkeys(conditions_numbers))        
 
     return {
         "Resource Consent Numbers": rc_str if rc_str else "Unknown Resource Consent Numbers",
@@ -406,7 +403,6 @@ def extract_metadata(text):
         "AUP(OP) Triggers": triggers_str if triggers_str else "Unknown AUP Triggers",
         "Reason for Consent": proposal_str if proposal_str else "Unknown Reason for Consent",
         "Consent Condition Numbers": ", ".join(conditions_numbers) if conditions_numbers else "Unknown Condition Numbers",
-        "Consent Conditions": ", ".join(consent_conditions) if consent_conditions else "Unknowne Consent Conditions",
         "Consent Status": check_expiry(expiry_date), # This will now use the localized date
         "Text Blob": text
     }
@@ -566,7 +562,7 @@ if uploaded_files:
             filtered_df = df if status_filter == "All" else df[df["Consent Status Enhanced"] == status_filter]
             display_df = filtered_df[[
                 "__file_name__", "Resource Consent Numbers", "Company Name", "Address", "Issue Date", "Expiry Date",
-                "Consent Status Enhanced", "AUP(OP) Triggers", "Reason for Consent", "Consent Condition Numbers", "Consent Conditions"
+                "Consent Status Enhanced", "AUP(OP) Triggers", "Reason for Consent", "Consent Condition Numbers"
             ]].rename(columns={"__file_name__": "File Name", "Consent Status Enhanced": "Consent Status"})
             st.dataframe(display_df)
             csv_output = display_df.to_csv(index=False).encode("utf-8")
