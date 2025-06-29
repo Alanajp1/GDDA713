@@ -382,8 +382,7 @@ def extract_metadata(text):
     # Extracting numbered conditions (if conditions_str is found)
     conditions_numbers = []
     if conditions_str:
-        temp_conditions_matches = re.findall(r"^\s*((?:\d+\.){1,3}\s*[A-Z].*?(?=\n\s*(?:*\d+\.){1,3}\s*[A-Z]|\Z)", conditions_str, re.MULTILINE | re.DOTALL)
-
+        temp_conditions_matches = re.findall(r"^\s*(\d+\.?\d*)\s*[A-Z].*?(?=\n\s*\d+\.?\d*\s*[A-Z]|\Z)", conditions_str, re.MULTILINE | re.DOTALL)
         flattened_temp_conditions = []
         for item in temp_conditions_matches:
             if isinstance(item, tuple):
