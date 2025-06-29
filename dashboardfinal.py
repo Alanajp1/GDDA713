@@ -171,7 +171,7 @@ def extract_metadata(text):
     ]
     rc_matches = []
     for pattern in rc_patterns:
-        rc_matches.extend(re.findall(pattern, text, re.MULTILINE))
+        rc_matches.extend(re.findall(pattern, text, re.DOTALL | re.MULTILINE))
 
     # Flatten list of lists/tuples that re.findall might return
     flattened_rc_matches = []
