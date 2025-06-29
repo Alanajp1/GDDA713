@@ -167,6 +167,8 @@ def extract_metadata(text):
         r"Application number(s):\s*(.+?)(?=\s*Applicant)",
         r"Application number:\s*(.+?)(?=\s*Original consent)",
         r"Application numbers:\s*(.+?)(?=\s*Original consent)",
+        r"Application number:\s*(.+?)(?=\s*Site)",
+        r"Application numbers:\s*(.+?)(?=\s*Site)",
         r"RC[0-9]{5,}" 
     ]
     rc_matches = []
